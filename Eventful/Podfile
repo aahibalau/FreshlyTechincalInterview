@@ -1,0 +1,48 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '13.0'
+
+def common_pods
+  pod 'PureLayout'
+  pod 'R.swift'
+  pod 'Swinject'
+  pod 'RealmSwift'
+  pod 'MBProgressHUD', '~> 1.0'
+  
+  pod 'RxSwift'
+  pod 'RxCocoa'
+  pod 'Action'
+  pod 'RxRealm'
+
+  pod 'OHHTTPStubs/Swift'
+end
+
+target 'Eventful' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+  inhibit_all_warnings!
+
+  common_pods
+
+  target 'EventfulTests' do
+    pod 'RxBlocking'
+    pod 'RxTest'
+  end
+
+  target 'EventfulUITests' do
+  end
+
+end
+
+post_install do |installer|
+  # NOTE: If you are using a CocoaPods version prior to 0.38, replace `pods_project` with `project` on the below line
+  installer.pods_project.targets.each do |target|
+    if target.name.start_with? "PureLayout"
+      target.build_configurations.each do |build_configuration|
+        build_configuration.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = ['$(inherited)', 'PURELAYOUT_APP_EXTENSIONS=1']
+      end
+    end
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
+  end
+end
